@@ -4,8 +4,16 @@
   <meta charset="UTF-8">
   <title>Menu</title>
   <link rel="stylesheet" href="style.css">
+  <script>
+    window.onload = function() {
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      if (isIOS) {
+        window.location.href = "Menu-Smorfia.pdf?v=2";
+      }
+    }
+  </script>
 </head>
 <body>
-  <embed src="Menu-Smorfia.pdf?v=2" type="application/pdf">
+  <embed src="Menu-Smorfia.pdf?v=2" type="application/pdf" width="100%" height="100%">
 </body>
 </html>
