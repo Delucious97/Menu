@@ -6,14 +6,24 @@
   <link rel="stylesheet" href="style.css">
   <script>
     window.onload = function() {
-      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-      if (isIOS) {
-        window.location.href = "Menu-Smorfia.pdf?v=2";
+      const ua = navigator.userAgent;
+
+      const isIOS = /iPad|iPhone|iPod/.test(ua);
+      const isSamsungInternet = /SamsungBrowser/.test(ua);
+
+      if (isIOS || isSamsungInternet) {
+        // Apri direttamente il PDF con il lettore nativo
+        window.location.replace("Menu-Smorfia.pdf?v=2");
       }
     }
   </script>
 </head>
 <body>
   <embed src="Menu-Smorfia.pdf?v=2" type="application/pdf" width="100%" height="100%">
+  
+  <p>
+    Se il menu non si visualizza correttamente, 
+    <a href="Menu-Smorfia.pdf?v=2" target="_blank">clicca qui per aprirlo</a>.
+  </p>
 </body>
 </html>
