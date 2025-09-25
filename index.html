@@ -7,13 +7,18 @@
   <script>
     window.onload = function() {
       const ua = navigator.userAgent;
-
       const isIOS = /iPad|iPhone|iPod/.test(ua);
       const isSamsungInternet = /SamsungBrowser/.test(ua);
 
-      if (isIOS || isSamsungInternet) {
-        // Apri direttamente il PDF con il lettore nativo
+      if (isIOS) {
+        // Safari iOS ha lettore integrato
         window.location.replace("Menu-Smorfia.pdf?v=2");
+      } else if (isSamsungInternet) {
+        // Samsung Internet: apri con Google Docs Viewer
+        const pdfUrl = window.location.origin + "/Menu-Smorfia.pdf?v=2";
+        window.location.replace(
+          "https://docs.google.com/gview?embedded=true&url=" + encodeURIComponent(pdfUrl)
+        );
       }
     }
   </script>
