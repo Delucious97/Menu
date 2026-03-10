@@ -2,24 +2,353 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <title>Menu</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Menu – La Smorfia</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
-    html, body {
-      margin: 0;
-      height: 100%;
-      width: 100%;
+    :root {
+      --rosso: #a01e1e;
+      --oro: #9a7b2f;
+      --oro-light: #c9a84c;
+      --dark: #111008;
+      --cream: #faf7f0;
+      --cream2: #f3ede0;
+      --mid: #7a6a4a;
+      --light-border: rgba(154,123,47,0.2);
     }
-    #viewer {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--cream); color: var(--dark); font-family: 'Jost', sans-serif; font-weight: 300; min-height: 100vh; }
+
+    .hero { background: var(--dark); padding: 3rem 1.5rem 2.5rem; text-align: center; position: relative; overflow: hidden; }
+    .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 120% 80% at 50% 110%, rgba(160,30,30,0.35) 0%, transparent 65%); }
+    .hero-logo { position: relative; width: 100px; height: 100px; margin: 0 auto 1.2rem; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 3px rgba(154,123,47,0.4), 0 8px 32px rgba(0,0,0,0.4); }
+    .hero-logo img { width: 80px; height: 80px; object-fit: contain; }
+    .hero-eyebrow { position: relative; font-size: 0.65rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--oro-light); margin-bottom: 0.5rem; }
+    .hero h1 { position: relative; font-family: 'Cormorant Garamond', serif; font-size: clamp(2.8rem, 10vw, 4rem); font-weight: 600; color: white; line-height: 1; letter-spacing: 0.02em; }
+    .hero h1 em { font-style: italic; color: var(--oro-light); }
+    .hero-divider { position: relative; display: flex; align-items: center; gap: 0.8rem; justify-content: center; margin: 1.2rem auto 0; max-width: 260px; }
+    .hero-divider::before, .hero-divider::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--oro-light), transparent); }
+    .hero-divider span { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.5); white-space: nowrap; }
+
+    .nav-wrap { position: sticky; top: 0; z-index: 100; background: var(--dark); border-bottom: 1px solid rgba(154,123,47,0.3); overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    .nav-wrap::-webkit-scrollbar { display: none; }
+    nav { display: flex; gap: 0; min-width: max-content; padding: 0 0.5rem; }
+    nav a { display: block; padding: 0.9rem 1rem; font-size: 0.65rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.5); text-decoration: none; white-space: nowrap; border-bottom: 2px solid transparent; transition: color 0.2s, border-color 0.2s; }
+    nav a:hover, nav a.active { color: var(--oro-light); border-bottom-color: var(--oro-light); }
+
+    main { max-width: 680px; margin: 0 auto; padding: 0 0 4rem; }
+    .section { padding: 2.5rem 1.5rem 0; }
+    .section-header { text-align: center; margin-bottom: 1.8rem; padding-bottom: 1.2rem; border-bottom: 1px solid var(--light-border); }
+    .section-header h2 { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.8rem, 6vw, 2.4rem); font-weight: 600; color: var(--rosso); letter-spacing: 0.05em; text-transform: uppercase; }
+
+    .dish { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding: 1.1rem 0; border-bottom: 1px solid var(--light-border); }
+    .dish:last-of-type { border-bottom: none; }
+    .dish-info { flex: 1; min-width: 0; }
+    .dish-name { font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; font-weight: 600; color: var(--oro); letter-spacing: 0.03em; line-height: 1.2; margin-bottom: 0.2rem; }
+    .dish-allergens { font-size: 0.65rem; color: rgba(122,106,74,0.6); margin-bottom: 0.3rem; }
+    .dish-desc { font-size: 0.8rem; color: var(--mid); line-height: 1.5; font-weight: 300; }
+    .dish-price { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 600; color: var(--dark); white-space: nowrap; flex-shrink: 0; }
+
+    .dish.highlight { background: #fff8f8; border: 1px solid rgba(160,30,30,0.25); border-left: 3px solid var(--rosso); padding: 1.1rem 1rem; margin: 0.3rem 0; }
+
+    .menu-card { background: var(--cream2); border: 1px solid var(--light-border); border-left: 3px solid var(--rosso); padding: 1.4rem 1.4rem 1.2rem; margin-bottom: 1.2rem; }
+    .menu-card-title { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 600; color: var(--rosso); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 0.8rem; }
+    .menu-card ul { list-style: none; margin-bottom: 0.8rem; }
+    .menu-card ul li { font-size: 0.82rem; color: var(--mid); padding: 0.2rem 0 0.2rem 1rem; position: relative; }
+    .menu-card ul li::before { content: '·'; position: absolute; left: 0; color: var(--oro); }
+    .menu-card-price { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 600; color: var(--dark); }
+    .menu-card-includes { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(122,106,74,0.6); margin-bottom: 0.4rem; }
+
+    .wine-category { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--oro); font-weight: 500; margin: 1.5rem 0 0.8rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--light-border); }
+    .wine { display: grid; grid-template-columns: 1fr auto auto; gap: 0.5rem; align-items: baseline; padding: 0.7rem 0; border-bottom: 1px solid rgba(154,123,47,0.1); }
+    .wine:last-child { border-bottom: none; }
+    .wine-name { font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-weight: 600; color: var(--oro); }
+    .wine-desc { grid-column: 1 / -1; font-size: 0.75rem; color: var(--mid); font-style: italic; margin-top: -0.3rem; }
+    .wine-calice, .wine-bottiglia { font-size: 0.82rem; color: var(--dark); text-align: right; white-space: nowrap; }
+
+    .bev-group { margin-bottom: 1.5rem; }
+    .bev-group-title { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--oro); font-weight: 500; margin-bottom: 0.6rem; padding-bottom: 0.3rem; border-bottom: 1px solid var(--light-border); }
+    .bev-row { display: flex; justify-content: space-between; align-items: baseline; padding: 0.5rem 0; border-bottom: 1px solid rgba(154,123,47,0.08); font-size: 0.85rem; gap: 0.5rem; }
+    .bev-row:last-child { border-bottom: none; }
+    .bev-name { color: var(--dark); }
+    .bev-detail { font-size: 0.72rem; color: var(--mid); margin-left: 0.3rem; }
+    .bev-price { color: var(--dark); white-space: nowrap; }
+
+    .allergeni-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; margin-top: 1rem; }
+    .alg-item { background: var(--cream2); border: 1px solid var(--light-border); padding: 0.6rem 0.5rem; text-align: center; font-size: 0.72rem; color: var(--mid); }
+    .alg-item strong { display: block; font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: var(--oro); font-weight: 600; margin-bottom: 0.1rem; }
+
+    .info-box { background: var(--cream2); border: 1px solid var(--light-border); border-top: 2px solid var(--oro); padding: 1.4rem; margin-top: 1.5rem; font-size: 0.82rem; color: var(--mid); line-height: 1.7; text-align: center; }
+    .contorni-box { background: var(--cream2); color: var(--dark); padding: 1.2rem 1.4rem; margin-top: 1rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; border: 1px solid var(--light-border); }
+    .contorni-box .label { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--oro); margin-bottom: 0.3rem; }
+    .contorni-box .items { font-size: 0.82rem; color: var(--mid); }
+    .contorni-box .price { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 600; color: var(--dark); flex-shrink: 0; }
+    .note-seasonal { font-size: 0.72rem; color: rgba(122,106,74,0.6); font-style: italic; text-align: center; margin-top: 1.2rem; line-height: 1.5; }
+    .wine-header { display: grid; grid-template-columns: 1fr auto auto; gap: 0 0.8rem; font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(122,106,74,0.5); padding-bottom: 0.4rem; border-bottom: 1px solid var(--light-border); margin-bottom: 0.2rem; }
+    footer { text-align: center; padding: 2rem 1.5rem; font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(122,106,74,0.5); border-top: 1px solid var(--light-border); margin-top: 2rem; }
   </style>
 </head>
 <body>
-  <iframe
-    id="viewer"
-    src="https://mozilla.github.io/pdf.js/web/viewer.html?file=https://Delucious97.github.io/Menu/Menu-Smorfia.pdf"
-  ></iframe>
+
+<div class="hero">
+  <div class="hero-logo">
+    <img src="logo.png" alt="La Smorfia" onerror="this.style.display='none';this.parentElement.innerHTML+='<span style=\'font-family:Cormorant Garamond,serif;font-size:2.2rem;font-weight:600;color:#a01e1e\'>S</span>'">
+  </div>
+  <p class="hero-eyebrow">Ristorante Pizzeria</p>
+  <h1>La <em>Smorfia</em></h1>
+  <div class="hero-divider"><span>Menu digitale</span></div>
+</div>
+
+<div class="nav-wrap">
+  <nav id="mainnav">
+    <a href="#combinazioni" class="active">Combinazioni</a>
+    <a href="#antipasti">Antipasti</a>
+    <a href="#primi">Primi</a>
+    <a href="#secondi">Secondi</a>
+    <a href="#pizze">Pizze</a>
+    <a href="#dolci">Dolci</a>
+    <a href="#bevande">Bevande</a>
+    <a href="#cocktail">Cocktail</a>
+    <a href="#vini">Vini</a>
+    <a href="#info">Info</a>
+  </nav>
+</div>
+
+<main>
+
+  <section class="section" id="combinazioni">
+    <div class="section-header"><h2>Combinazioni dello Chef</h2></div>
+    <div class="menu-card">
+      <div class="menu-card-title">Menù Napoli</div>
+      <ul><li>Fritto misto napoletano</li><li>Pizza a scelta</li><li>Dolce a scelta</li></ul>
+      <div class="menu-card-includes">Acqua · Caffè · Servizio inclusi</div>
+      <div class="menu-card-price">€ 25,00</div>
+    </div>
+    <div class="menu-card">
+      <div class="menu-card-title">Menù Vomero</div>
+      <ul><li>Tagliere "La Smorfia"</li><li>Fusilli alla genovese</li><li>Polpette in salsa</li><li>Dolce a scelta</li></ul>
+      <div class="menu-card-includes">Acqua · Caffè · Servizio inclusi</div>
+      <div class="menu-card-price">€ 30,00</div>
+    </div>
+    <div class="menu-card">
+      <div class="menu-card-title">Menù Mergellina</div>
+      <ul><li>Polpo e patate</li><li>Scialatielli al "Profumo di mare"</li><li>Frittura di gamberi e calamari</li><li>Dolce a scelta</li></ul>
+      <div class="menu-card-includes">Acqua · Caffè · Servizio inclusi</div>
+      <div class="menu-card-price">€ 35,00</div>
+    </div>
+  </section>
+
+  <section class="section" id="antipasti">
+    <div class="section-header"><h2>Antipasti</h2></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Provola alla Pizzaiola</div><div class="dish-allergens">(6, 10, 12)</div><div class="dish-desc">Provola affumicata di Agerola con ragù napoletano</div></div><div class="dish-price">€ 6,00</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Paccheri Ripieni</div><div class="dish-allergens">(1, 6, 12)</div><div class="dish-desc">4 Paccheri ripieni di ragù alla genovese e mozzarella, impanati e fritti</div></div><div class="dish-price">€ 6,00</div></div>
+    <div class="dish highlight"><div class="dish-info"><div class="dish-name">Fritto Misto Napoletano</div><div class="dish-allergens">(1, 3, 6, 7, 10) · per 2 persone</div><div class="dish-desc">Zeppole, crocchè di patate, mozzarella in carrozza, palla di riso napoletana e frittata di maccheroni classica</div></div><div class="dish-price">€ 10,00</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Polpo e Patate</div><div class="dish-allergens">(14)</div><div class="dish-desc">Bocconcini di polpo lessati e marinati, accompagnati da crema di patate</div></div><div class="dish-price">€ 10,00</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Tagliere "La Smorfia"</div><div class="dish-allergens">(1, 3, 6) · per 2 persone</div><div class="dish-desc">Prosciutto crudo, salame Mugnano, porchetta di Ariccia, ciccioli napoletani, scamorza affumicata di Agerola, pecorino Bagnolese, tarallo napoletano n'zogna e pepe</div></div><div class="dish-price">€ 18,00</div></div>
+  </section>
+
+  <section class="section" id="primi">
+    <div class="section-header"><h2>Primi Piatti</h2></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Gnocchi alla Sorrentina</div><div class="dish-allergens">(1, 6, 10, 12)</div><div class="dish-desc">Gnocchi fatti a mano con pomodoro, provola di Agerola e provolone del monaco D.O.P.</div></div><div class="dish-price">€ 9,00</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Fusilli alla Genovese</div><div class="dish-allergens">(1, 12)</div><div class="dish-desc">Fusilli conditi con ragù bianco di carne e cipolle</div></div><div class="dish-price">€ 10,00</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Pasta e Fagioli con Cozze</div><div class="dish-allergens">(1, 10, 12, 14)</div><div class="dish-desc">Pasta mista con fagioli, cozze e prezzemolo fresco</div></div><div class="dish-price">€ 12,00</div></div>
+    <div class="dish highlight"><div class="dish-info"><div class="dish-name">Scialatielli "Profumo di Mare"</div><div class="dish-allergens">(1, 9, 14)</div><div class="dish-desc">Pasta all'uovo con pomodorini freschi, cozze, vongole, gamberone e prezzemolo</div></div><div class="dish-price">€ 16,00</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Risotto Gamberi e Burrata</div><div class="dish-allergens">(6, 9)</div><div class="dish-desc">Riso mantecato con burrata pugliese, tartare di gamberi ed emulsione di prezzemolo</div></div><div class="dish-price">€ 16,00</div></div>
+  </section>
+
+  <section class="section" id="secondi">
+    <div class="section-header"><h2>Secondi Piatti</h2></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Polpette con Salsa</div><div class="dish-allergens">(1, 6, 7, 10, 12)</div><div class="dish-desc">Polpette fritte fatte a mano con salsa di pomodoro e basilico fresco</div></div><div class="dish-price">€ 8,00</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Impepata di Cozze</div><div class="dish-allergens">(1, 14)</div><div class="dish-desc">Cozze scottate con pepe nero e crostini di pane tostato</div></div><div class="dish-price">€ 10,00</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Baccalà Fritto</div><div class="dish-allergens">(1, 3, 4, 8)</div><div class="dish-desc">Trancio di baccalà impanato e fritto, su una delicata crema di ceci</div></div><div class="dish-price">€ 12,00</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Polpo alla Luciana</div><div class="dish-allergens">(1, 14)</div><div class="dish-desc">Classica ricetta napoletana con pomodoro, capperi e olive taggiasche</div></div><div class="dish-price">€ 14,00</div></div>
+    <div class="dish highlight"><div class="dish-info"><div class="dish-name">Frittura di Gamberi e Calamari</div><div class="dish-allergens">(1, 9, 14)</div><div class="dish-desc">Con verdure in pastella, impanati con farina di tipo 00</div></div><div class="dish-price">€ 16,00</div></div>
+    <div class="contorni-box">
+      <div><div class="label">Contorni</div><div class="items">Patate fritte · Verdure grigliate · Insalata mista · Melanzane a funghetto · Friarielli</div></div>
+      <div class="price">€ 4</div>
+    </div>
+    <p class="note-seasonal">In caso di intolleranze e/o allergie, richiedere l'apposito quaderno al personale.</p>
+  </section>
+
+  <section class="section" id="pizze">
+    <div class="section-header"><h2>Pizze</h2></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Marinara <span class="dish-allergens">(1)</span></div><div class="dish-desc">Pomodoro, aglio, origano</div></div><div class="dish-price">€ 5,00</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Margherita <span class="dish-allergens">(1,6)</span></div><div class="dish-desc">Pomodoro, fiordilatte, basilico</div></div><div class="dish-price">€ 6,00</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Diavola <span class="dish-allergens">(1,6)</span></div><div class="dish-desc">Pomodoro, fiordilatte, salamino piccante, basilico</div></div><div class="dish-price">€ 7,00</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Pub <span class="dish-allergens">(1,6)</span></div><div class="dish-desc">Pomodoro, fiordilatte, wurstel, patatine, basilico</div></div><div class="dish-price">€ 7,00</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Ortolana <span class="dish-allergens">(1,6,10,11,12)</span></div><div class="dish-desc">Bianca, fiordilatte, melanzane e zucchine grigliate, carciofi, basilico</div></div><div class="dish-price">€ 7,50</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Margherita Super <span class="dish-allergens">(1,6)</span></div><div class="dish-desc">Pomodoro, fiordilatte, cotto, funghi, basilico</div></div><div class="dish-price">€ 7,50</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Napoli <span class="dish-allergens">(1,6,8)</span></div><div class="dish-desc">Pomodoro, fiordilatte, capperi, acciughe, basilico</div></div><div class="dish-price">€ 8,00</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Margherita Bis <span class="dish-allergens">(1,6,8)</span></div><div class="dish-desc">Pomodoro, fiordilatte, tonno, cipolla, basilico</div></div><div class="dish-price">€ 8,00</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Provola e Pepe <span class="dish-allergens">(1,6)</span></div><div class="dish-desc">Pomodoro, Provola di Agerola, pepe, basilico</div></div><div class="dish-price">€ 8,00</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">4 Formaggi <span class="dish-allergens">(1,6)</span></div><div class="dish-desc">Bianca, fiordilatte, emmenthal, gorgonzola, gouda, basilico</div></div><div class="dish-price">€ 8,50</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Porca Vacca <span class="dish-allergens">(1,6)</span></div><div class="dish-desc">Pomodoro, fiordilatte, cotto, wurstel, salame, basilico</div></div><div class="dish-price">€ 8,50</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Calzone / Calzone Fritto <span class="dish-allergens">(1,6)</span></div><div class="dish-desc">Base con ricotta, Provola di Agerola, pomodoro e pepe. A scelta: salame, cotto, cicoli napoletani (+2€), verdure grigliate</div></div><div class="dish-price">€ 8,50 / 9,00</div></div>
+    <div class="dish highlight"><div class="dish-info"><div class="dish-name">Margherita DOC <span class="dish-allergens">(1,6)</span></div><div class="dish-desc">Pomodoro, mozzarella di bufala, basilico</div></div><div class="dish-price">€ 9,00</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Boscaiola <span class="dish-allergens">(1,6)</span></div><div class="dish-desc">Pomodoro, fiordilatte, salsiccia, funghi, grana, basilico</div></div><div class="dish-price">€ 9,00</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Tirolese <span class="dish-allergens">(1,6)</span></div><div class="dish-desc">Pomodoro, fiordilatte, mascarpone, speck, basilico</div></div><div class="dish-price">€ 9,00</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">4 Stagioni <span class="dish-allergens">(1,6)</span></div><div class="dish-desc">Pomodoro, fiordilatte, cotto, funghi, salame, cicoli napoletani e basilico</div></div><div class="dish-price">€ 9,00</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Capricciosa <span class="dish-allergens">(1,6,10,11,12)</span></div><div class="dish-desc">Pomodoro, fiordilatte, cotto, funghi, carciofi, olive taggiasche, basilico</div></div><div class="dish-price">€ 9,00</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Salsiccia e Friarielli <span class="dish-allergens">(1,6)</span></div><div class="dish-desc">Bianca, fiordilatte, salsiccia, friarielli, basilico</div></div><div class="dish-price">€ 9,50</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Caprese <span class="dish-allergens">(1,6)</span></div><div class="dish-desc">Base pomodoro. In uscita: pomodorini, mozzarella di bufala, basilico</div></div><div class="dish-price">€ 9,50</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Don Arturo Completa <span class="dish-allergens">(1,6)</span></div><div class="dish-desc">Bianca, fiordilatte, pomodorini, crudo, rucola, grana, basilico</div></div><div class="dish-price">€ 9,50</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Parmigiana <span class="dish-allergens">(1,6)</span></div><div class="dish-desc">Pomodoro, Provola di Agerola, melanzane a funghetto, grana, basilico</div></div><div class="dish-price">€ 10,00</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Pizza Crocchè <span class="dish-allergens">(1,6)</span></div><div class="dish-desc">Bianca, fiordilatte, cotto, grana e crocchè di patate, basilico</div></div><div class="dish-price">€ 11,00</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Montanara <span class="dish-allergens">(1,6,10)</span></div><div class="dish-desc">Pizza fritta e ripassata al forno con ragù napoletano, fiordilatte, parmigiano e basilico</div></div><div class="dish-price">€ 12,00</div></div>
+    <div class="dish highlight"><div class="dish-info"><div class="dish-name">O' Vesuvio <span class="dish-allergens">(1,6)</span></div><div class="dish-desc">Pomodoro, fiordilatte, basilico. In uscita: burrata, crudo, pomodorini, rucola</div></div><div class="dish-price">€ 12,00</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Pizza del Mese</div><div class="dish-desc">Pizza nuova ogni mese — chiedere al personale</div></div><div class="dish-price">€ 12,00</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Calabrisella <span class="dish-allergens">(1,6)</span></div><div class="dish-desc">Pomodoro, 'nduja calabrese, cipolla di Tropea, burrata, basilico</div></div><div class="dish-price">€ 12,00</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">'Nzogna e Pepe <span class="dish-allergens">(1,3,4,6)</span></div><div class="dish-desc">Bianca, porchetta di Ariccia, Provola di Agerola, tarallo napoletano sbriciolato, basilico</div></div><div class="dish-price">€ 12,00</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Pizza della Domenica <span class="dish-allergens">(1,6)</span></div><div class="dish-desc">Ragù napoletano, mozzarella di bufala, polpette, basilico</div></div><div class="dish-price">€ 12,00</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Mamma Angela <span class="dish-allergens">(1,6)</span></div><div class="dish-desc">Bianca, provola di Agerola, scarola, olive taggiasche, pezzetti di parmigiano e basilico</div></div><div class="dish-price">€ 13,00</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Pistacchiosa <span class="dish-allergens">(1,3,4,6)</span></div><div class="dish-desc">Bianca, mortadella, pesto e granella di pistacchio, burrata, basilico</div></div><div class="dish-price">€ 13,00</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Nautilus <span class="dish-allergens">(1,6)</span></div><div class="dish-desc">Dentro: melanzane a funghetto, salame piccante, Provola di Agerola. Sopra: crudo, rucola, pomodorini, grana, mozzarella di bufala</div></div><div class="dish-price">€ 14,00</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">O' Core E' Napule <span class="dish-allergens">(1,6)</span></div><div class="dish-desc">Quattro spicchi ripieni: salsiccia e friarielli; salame piccante; cotto e funghi; melanzane a funghetto. Al centro: bufala intera, crudo, rucola, pomodorini, grana</div></div><div class="dish-price">€ 15,00</div></div>
+    <div class="dish highlight"><div class="dish-info"><div class="dish-name">La Smorfia 2.0 <span class="dish-allergens">(1,6)</span></div><div class="dish-desc">Base di pomodoro e Provola di Agerola, divisa in 4 spicchi: parmigiana · salsiccia e friarielli · cicoli e pepe · 'nduja e cipolle di Tropea</div></div><div class="dish-price">€ 15,00</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Frutti di Mare <span class="dish-allergens">(1,6,9,14)</span></div><div class="dish-desc">Pomodoro, calamari, gamberetti, cozze, vongole, prezzemolo</div></div><div class="dish-price">€ 15,00</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Panuozzo</div><div class="dish-desc">Panino cotto in forno a legna, farcito a scelta</div></div><div class="dish-price">da € 7,00</div></div>
+    <p class="note-seasonal">*In base alla stagione alcuni prodotti potrebbero essere diversi da quelli indicati nel menù.</p>
+  </section>
+
+  <section class="section" id="dolci">
+    <div class="section-header"><h2>Dolci</h2></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Cheesecake <span class="dish-allergens">(1,3,6,7)</span></div><div class="dish-desc">Classico al forno, guarnito a scelta tra: caramello, fragola, frutti di bosco, Nutella (+0,5€) o crema al pistacchio (+1€)</div></div><div class="dish-price">€ 6,00</div></div>
+    <div class="dish highlight"><div class="dish-info"><div class="dish-name">Babà <span class="dish-allergens">(1,3,6,7)</span></div><div class="dish-desc">Con bagna al rum, guarnito con panna e fragole fresche</div></div><div class="dish-price">€ 6,00</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Babamisù 2.0 <span class="dish-allergens">(1,3,6,7)</span></div><div class="dish-desc">Babà bagnato a rum e caffè, farcito con crema al mascarpone e cacao</div></div><div class="dish-price">€ 6,00</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Pastiera Napoletana <span class="dish-allergens">(1,3,6,7)</span></div><div class="dish-desc">Torta di pasta frolla con grano cotto, ricotta, uova e canditi</div></div><div class="dish-price">€ 6,00</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Straccetti alla Nutella <span class="dish-allergens">(1,3,6)</span></div><div class="dish-desc">Strisce di impasto fritte con nutella</div></div><div class="dish-price">€ 6,00</div></div>
+    <div class="dish"><div class="dish-info"><div class="dish-name">Torta Caprese <span class="dish-allergens">(3,6,7)</span></div><div class="dish-desc">Torta al cioccolato e mandorle accompagnata da panna</div></div><div class="dish-price">€ 6,00</div></div>
+    <div class="info-box">Tutti i dolci sono di nostra produzione<br><span style="font-size:0.72rem;opacity:0.7">*Per gelati, sorbetti e dolci fuori menù chiedere al personale</span></div>
+  </section>
+
+  <section class="section" id="bevande">
+    <div class="section-header"><h2>Bevande</h2></div>
+    <div class="bev-group">
+      <div class="bev-group-title">Acqua</div>
+      <div class="bev-row"><span class="bev-name">Norda naturale / gassata <span class="bev-detail">0,75 lt</span></span><span class="bev-price">€ 2,00</span></div>
+    </div>
+    <div class="bev-group">
+      <div class="bev-group-title">Bibite</div>
+      <div class="bev-row"><span class="bev-name">Coca Cola, Coca Zero, Fanta <span class="bev-detail">bottiglia vetro 0,33 lt</span></span><span class="bev-price">€ 3,00</span></div>
+      <div class="bev-row"><span class="bev-name">Estathe' <span class="bev-detail">bottiglia 0,40 lt</span></span><span class="bev-price">€ 3,00</span></div>
+      <div class="bev-row"><span class="bev-name">Pepsi alla spina <span class="bev-detail">0,20 lt</span></span><span class="bev-price">€ 3,00</span></div>
+      <div class="bev-row"><span class="bev-name">Pepsi alla spina <span class="bev-detail">0,40 lt</span></span><span class="bev-price">€ 5,00</span></div>
+    </div>
+    <div class="bev-group">
+      <div class="bev-group-title">Bar</div>
+      <div class="bev-row"><span class="bev-name">Grappe e Amari</span><span class="bev-price">€ 3,00</span></div>
+      <div class="bev-row"><span class="bev-name">Limoncello <span class="bev-detail">produzione propria</span></span><span class="bev-price">€ 3,50</span></div>
+      <div class="bev-row"><span class="bev-name">Rum o Whisky</span><span class="bev-price">€ 5,00</span></div>
+      <div class="bev-row"><span class="bev-name">Caffè / Decaffeinato <span class="bev-detail">espresso napoletano</span></span><span class="bev-price">€ 1,30 / 1,50</span></div>
+      <div class="bev-row"><span class="bev-name">Orzo</span><span class="bev-price">€ 1,60</span></div>
+      <div class="bev-row"><span class="bev-name">Caffè corretto sambuca o amari</span><span class="bev-price">€ 2,00</span></div>
+      <div class="bev-row"><span class="bev-name">Caffè corretto rum o whisky</span><span class="bev-price">€ 2,50</span></div>
+      <div class="bev-row"><span class="bev-name">Servizio</span><span class="bev-price">€ 2,00</span></div>
+    </div>
+    <div class="bev-group">
+      <div class="bev-group-title">Birre alla Spina</div>
+      <div class="bev-row"><span class="bev-name">Theresianer <span class="bev-detail">22 cl</span></span><span class="bev-price">€ 3,00</span></div>
+      <div class="bev-row"><span class="bev-name">Theresianer <span class="bev-detail">40 cl</span></span><span class="bev-price">€ 5,00</span></div>
+    </div>
+    <div class="bev-group">
+      <div class="bev-group-title">Birrificio LA MI'BIRRA</div>
+      <div class="bev-row"><span class="bev-name">La Mì Bionda <span class="bev-detail">33 cl · Bionda</span></span><span class="bev-price">€ 6,00</span></div>
+      <div class="bev-row"><span class="bev-name">La Mì Nora <span class="bev-detail">50 cl · Weiss</span></span><span class="bev-price">€ 7,00</span></div>
+      <div class="bev-row"><span class="bev-name">La Mì Pisa <span class="bev-detail">33 cl · Ambrata</span></span><span class="bev-price">€ 6,00</span></div>
+      <div class="bev-row"><span class="bev-name">La Mì Rossa <span class="bev-detail">75 cl · Rossa</span></span><span class="bev-price">€ 14,00</span></div>
+    </div>
+    <div class="bev-group">
+      <div class="bev-group-title">Birrificio MUDITA</div>
+            <div class="bev-row"><span class="bev-name">Wanderlust <span class="bev-detail">33 cl · IPA</span></span><span class="bev-price">€ 6,00</span></div>
+      <div class="bev-row"><span class="bev-name">Kamos <span class="bev-detail">33 cl · Rossa</span></span><span class="bev-price">€ 6,00</span></div>
+      <div class="bev-row"><span class="bev-name">Lagom <span class="bev-detail">33 cl · West Coast IPA</span></span><span class="bev-price">€ 6,00</span></div>
+      <div class="bev-row"><span class="bev-name">Zapoi <span class="bev-detail">33 cl · Double IPA</span></span><span class="bev-price">€ 6,00</span></div>
+    </div>
+  </section>
+
+  <section class="section" id="cocktail">
+    <div class="section-header"><h2>Cocktail</h2></div>
+    <div class="bev-group">
+      <div class="bev-row"><span class="bev-name">Spritz</span><span class="bev-price">€ 6,00</span></div>
+      <div class="bev-row"><span class="bev-name">Gin Tonic</span><span class="bev-price">€ 7,00 / 10,00</span></div>
+      <div class="bev-row"><span class="bev-name">Americano</span><span class="bev-price">€ 7,00</span></div>
+      <div class="bev-row"><span class="bev-name">Negroni</span><span class="bev-price">€ 8,00</span></div>
+      <div class="bev-row"><span class="bev-name">Cuba Libre</span><span class="bev-price">€ 6,00 / 12,00</span></div>
+    </div>
+  </section>
+
+  <section class="section" id="vini">
+    <div class="section-header"><h2>Carta dei Vini</h2></div>
+    <div class="wine-header"><span></span><span style="text-align:right">Calice</span><span style="text-align:right">Bottiglia</span></div>
+    <div class="wine-category">Vini Rossi</div>
+    <div class="wine"><div class="wine-name">Il Gufo – Vino da Tavola</div><div></div><div class="wine-bottiglia">€ 12,00</div><div class="wine-desc">Voglia di Vino – Toscana</div></div>
+    <div class="wine"><div class="wine-name">Poggio Tempesti – Vino da Tavola</div><div></div><div class="wine-bottiglia">€ 12,00</div><div class="wine-desc">Az. Agr. Tamburini Renzo – Toscana</div></div>
+    <div class="wine"><div class="wine-name">Chianti Colli Senesi D.O.C.G.</div><div></div><div class="wine-bottiglia">€ 16,00</div><div class="wine-desc">100% Sangiovese, Fattoria la Torre – Toscana</div></div>
+    <div class="wine"><div class="wine-name">Birbone</div><div></div><div class="wine-bottiglia">€ 20,00</div><div class="wine-desc">60% Sangiovese, 30% Merlot, 10% Cab. Sauvignon – Fattoria la Torre, Toscana</div></div>
+    <div class="wine-category">Vini Rosati</div>
+    <div class="wine"><div class="wine-name">Badalui</div><div></div><div class="wine-bottiglia">€ 18,00</div><div class="wine-desc">50% Merlot, 50% Sangiovese – Fattoria la Torre, Toscana</div></div>
+    <div class="wine-category">Vini Bianchi Frizzanti</div>
+    <div class="wine"><div class="wine-name">Prosecco D.O.C. Treviso</div><div class="wine-calice">€ 6,00</div><div class="wine-bottiglia">€ 16,00</div><div class="wine-desc">Rive della chiesa – Veneto</div></div>
+    <div class="wine"><div class="wine-name">Bianco alla spina</div><div class="wine-calice" style="font-size:0.72rem;line-height:1.8">0,25 lt · €4<br>0,50 lt · €7<br>1,00 lt · €10</div><div></div></div>
+    <div class="wine-category">Vini Bianchi</div>
+    <div class="wine"><div class="wine-name">La Civetta – Vino da Tavola</div><div></div><div class="wine-bottiglia">€ 12,00</div><div class="wine-desc">Voglia di Vino – Toscana</div></div>
+    <div class="wine"><div class="wine-name">Torricchio – Vino da Tavola</div><div></div><div class="wine-bottiglia">€ 12,00</div><div class="wine-desc">Az. Agr. Tamburini Renzo – Toscana</div></div>
+    <div class="wine"><div class="wine-name">Passerina</div><div></div><div class="wine-bottiglia">€ 15,00</div><div class="wine-desc">100% Passerina, Cantina Offida – Marche</div></div>
+    <div class="wine"><div class="wine-name">Pinot Grigio</div><div></div><div class="wine-bottiglia">€ 16,00</div><div class="wine-desc">100% Pinot grigio, Az. Zanatta – Veneto</div></div>
+    <div class="wine"><div class="wine-name">Falanghina D.O.P.</div><div class="wine-calice">€ 6,00</div><div class="wine-bottiglia">€ 18,00</div><div class="wine-desc">100% Falanghina, Corte Normanna – Campania</div></div>
+    <div class="wine"><div class="wine-name">PRS</div><div></div><div class="wine-bottiglia">€ 18,00</div><div class="wine-desc">100% Malvasia Lunga, Pietro Beconcini – Toscana</div></div>
+    <div class="wine"><div class="wine-name">Bagiogie</div><div class="wine-calice">€ 6,00</div><div class="wine-bottiglia">€ 20,00</div><div class="wine-desc">90% Vermentino, 10% Sauvignon blanc – Fattoria la Torre, Toscana</div></div>
+    <div class="wine"><div class="wine-name">Due Sei Quattro</div><div></div><div class="wine-bottiglia">€ 25,00</div><div class="wine-desc">100% Viognier, Az. Santa Lucia – Toscana</div></div>
+    <div class="wine"><div class="wine-name">Vermentino Bolgheri D.O.C.</div><div></div><div class="wine-bottiglia">€ 28,00</div><div class="wine-desc">100% Vermentino, Campo al Noce – Toscana</div></div>
+  </section>
+
+  <section class="section" id="info">
+    <div class="section-header"><h2>Allergeni & Info</h2></div>
+    <div class="allergeni-grid">
+      <div class="alg-item"><strong>1</strong>Glutine</div>
+      <div class="alg-item"><strong>2</strong>Soia</div>
+      <div class="alg-item"><strong>3</strong>Frutta secca</div>
+      <div class="alg-item"><strong>4</strong>Arachidi</div>
+      <div class="alg-item"><strong>5</strong>Sesamo</div>
+      <div class="alg-item"><strong>6</strong>Latte</div>
+      <div class="alg-item"><strong>7</strong>Uova</div>
+      <div class="alg-item"><strong>8</strong>Pesce</div>
+      <div class="alg-item"><strong>9</strong>Crostacei</div>
+      <div class="alg-item"><strong>10</strong>Sedano</div>
+      <div class="alg-item"><strong>11</strong>Senape</div>
+      <div class="alg-item"><strong>12</strong>Solfiti</div>
+      <div class="alg-item"><strong>13</strong>Lupini</div>
+      <div class="alg-item"><strong>14</strong>Molluschi</div>
+    </div>
+    <div class="info-box">
+      Si accettano prenotazioni per cene e/o pranzi di gruppo con menù a scelta e richieste particolari.<br><br>
+      <span style="font-size:0.72rem;opacity:0.7">In base alla stagione alcuni prodotti potrebbero essere surgelati e/o diversi da quelli indicati nel menù, per garantire la migliore freschezza e qualità possibile. Chiedere al personale per maggiori info.</span>
+    </div>
+  </section>
+
+</main>
+
+<footer>© La Smorfia · Ristorante Pizzeria · Menu digitale</footer>
+
+<script>
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('nav a');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(a => a.classList.remove('active'));
+        const active = document.querySelector(`nav a[href="#${entry.target.id}"]`);
+        if (active) {
+          active.classList.add('active');
+          active.scrollIntoView({ inline: 'center', behavior: 'smooth' });
+        }
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+
 </body>
 </html>
